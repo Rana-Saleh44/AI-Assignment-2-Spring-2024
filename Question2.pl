@@ -38,13 +38,50 @@ move([X, Y], [X, Y1], 1):-
     Y1 is Y + 1,
     Y1 >= 0,
     validColor(X, Y1).
+
 validColor(X, Y):-
     board(_, _, Board),
-    nth(X, Board, Row),   %complete nth0
+    nth(X, Board, Row),
+    nth(Y, Row, red).
+
+calculateH([X1, Y1], [X2, Y2], H):-
+    H is abs(X1 - X2) + abs(Y1 - Y2).
+
+findPath([GoalRow, GoalCol], [GoalRow, GoalCol], [GoalRow, GoalCol]).
+
+findPath([CurrentRow, CurrentCol], [GoalRow, GoalCol], [[CurrentRow, CurrentCol]|Path]:-
+    move([CurrentRow, CurrentCol], NextPosition, _),   %To get the next valid move
+    findPath(NextPosition, [GoalRow, GoalCol, Path).
+
+seach:-
+    initialState(CurrentRow, CurrentCol, GoalRow, GoalCol, _),
+    initPath([CurrentRow, CurrentCol, [GoalRow, GoalCol], Path),
+    write('Found path: '), write(Path), nl,!.
 
 
-search:-
-    initialState(CurrentRow, CurrentCol, GoalRow, GoalCol,
+
+search(Open, Closed, Goal):-
+    getBestState(Open, [CurrentState, Parent, G, F, H], _),
+    CurrentState = Goal,
+    write("Search is Complete"), nl,
+    printSolution([CurrentState, Parent, G, H, F], Closed), !.
+
+
+search(Open, Closed, Goal):-
+    getBestState(Open, CurrentNode,TempOpen),
+    getAllValidChildren(CurrentNode, TempOpen, Closed, Goal, Children),
+    addChildren(Children, TempOpen, NewOpen),
+    append(Closed, [CurrentNode], NewClosed),
+    search(NewOpen, NewClosed, Goal).
+
+findMin([X], X):- !.
+
+findMin([H|T], Min):-
+    findMin(T, TempMin),
+    H = [_,_,_,HH, HF],
+    TempMin = [_,_,_,TempH,TempF],
+    (   TempF < HeadF -> Min = TempMin;Min = Head).
+
 
 getAllValidChildren(Node, Open, Closed, Goal, Children):-
     findall(Next, getNextState(Node, Open, Closed, Goal, Next), Children).
@@ -69,7 +106,7 @@ addChildren(Children, Open, NewOpen):-
     findMin(Open, BestChild),
     delete(Open, BestChild, Rest).
 
-%to print the path solution
+%print the path solution
 printSolution([State, null, G, H,F], _):-
     write([State, G, H,F]), nl.
 printSolution([State, Parent, G, H, F], Closed):-
