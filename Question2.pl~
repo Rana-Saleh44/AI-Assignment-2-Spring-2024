@@ -26,10 +26,3 @@ setGoalPosition(Row, Column, Color):-
 
 
 
-
-
-
-printSolution([State, null, G, H,F], _):-
-    write([State, G, H,F]), nl.
-printSolution([State, Parent, G, H, F], Closed),
-
