@@ -42,14 +42,28 @@ move([X, Y], [X, Y1], 1):-
 validColor(X, Y):-
     board(_, _, Board),
     nth(X, Board, Row),   %complete nth0
+    
+    
 search(Open, Closed, Goal):-
     getBestState(Open, [CurrentState, Parent, G, F, H], _),
     CurrentState = Goal,
     write("Search is Complete"), nl,
-    printSolution([CurrentState,
+    printSolution([CurrentState, Parent, G, H, F], Closed), !.
+search(Open, Closed, Goal):-
+    getBestState(Open, CurrentNode,TempOpen),
+    getAllValidChildren(CurrentNode, TempOpen, Closed, Goal, Children),
+    addChildren(Children, TempOpen, NewOpen),
+    append(Closed, [CurrentNode], NewClosed),
+    search(NewOpen, NewClosed, Goal).
 
+findMin([X], X):-!.
+findMin([H|T], Min):-
+    findMin(T, TempMin),
+    H = [_,_,_,HH, HF],
+    TempMin = [_,_,_,TempH,TempF],
+    (   TempF < HeadF -> Min = TempMin;Min = 
 search:-
-    initialState(CurrentRow, CurrentCol, GoalRow, GoalCol,
+    initialState(CurrentRow, CurrentCol, GoalRow, GoalCol, 
                  
                  
 
