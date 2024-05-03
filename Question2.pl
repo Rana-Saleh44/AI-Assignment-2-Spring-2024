@@ -2,7 +2,7 @@
 :- dynamic board/3.
 
 initialize(Board):-
-    retractall(board(,,_)),
+    retractall(board(_,_,_)),
     assert(Board).
 
 boardSize(Rows, Columns):-
@@ -82,8 +82,8 @@ findMin([X], X):- !.
 
 findMin([H|T], Min):-
     findMin(T, TempMin),
-    H = [,,_,H, HF],
-    TempMin = [,,_,TempH,TempF],
+    H = [_,_,_,H, HF],
+    TempMin = [_,_,_,TempH,TempF],
     (TempF < HF -> Min = TempMin; Min = Head).
 
 getAllValidChildren(Node, Open, Closed, Goal, Children):-
